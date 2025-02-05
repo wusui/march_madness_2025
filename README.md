@@ -21,12 +21,23 @@ The python scripts listed here should not affect things if run multiple times.
 
 Once the tournament starts, execute the following python script:
 ```
-pass # Code needs to be added here
+from get_entries import make_brackets
+
+make_brackets()
 ```
 
-This only needs to be run once (when the tournament starts).  When completed, a NAME_picks.json file
+This only needs to be run once (when the tournament starts).  When completed, a NAME_brackets.json file
 will be created which contains a directory indexed by entrant name.  The data in this dictionary will
-be a list of that entrant's picks.
+be a link to the html file containing the bracket.
+
+#### Save actual player picks
+```
+pass # Code needs to be added here
+```
+This also only needs to be run once (when the tournament starts).  When completed, a NAME_picks.json file
+will be created which contains a directory indexed by entrant name.  The data in this dictionary will
+be a list of the picks made in the bracket (the first 32 entries will be the first round picks made in
+bracket layout order, the next 16 entries will be the second round picks...).
 
 #### Update the games played so far
 
