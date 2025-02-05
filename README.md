@@ -9,7 +9,7 @@ the second, third, and fourth rounds of the tournament are completed.
 - Download the python and html files in this repo to a directory/folder of your choice
 - Set PYTHONPATH to include this directory/folder
 - Create a folder anywhere named either 'mens' or 'womens' depending on the associated tournament
-- TO DO: create a link to the ESPN pool on which you plan to run this code
+- In the folder just created, add a file name group_id.ini where the DEFAULT section contains a groupid value equal to the id of this group
 
 ## Execution
 
