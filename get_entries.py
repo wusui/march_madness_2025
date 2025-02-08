@@ -6,11 +6,11 @@ import os
 import time
 import json
 import configparser
-from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait # available since 2.4.0
 from selenium.webdriver.support import expected_conditions as EC # available since 2.26.0
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
+from get_webpage import get_webpage
 
 def get_entries_from_driver_page(driver):
     """
@@ -41,9 +41,7 @@ def parse_first_page(html_page):
         c_data = get_entries_from_driver_page(driver)
         binfo = get_buttons(driver)
         return c_data + follow_next_page(driver, binfo, pcount + 1)
-    options = webdriver.ChromeOptions()
-    options.add_argument("--headless=new")
-    driver = webdriver.Chrome(options=options)
+    driver = get_webpage()
     driver.get(html_page)
     WebDriverWait(driver,1000).until(EC.presence_of_all_elements_located(
                     (By.XPATH,"(//iframe)")))

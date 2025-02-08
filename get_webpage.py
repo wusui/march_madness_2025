@@ -4,12 +4,10 @@ Use selenium to extract contents of a webpage
 """
 from selenium import webdriver
 
-def get_webpage(wpage):
+def get_webpage():
     """
     Use headless driver
     """
     options = webdriver.ChromeOptions()
     options.add_argument("--headless=new")
-    driver = webdriver.Chrome(options=options)
-    driver.get(wpage)
-    return driver.page_source[:]
+    return webdriver.Chrome(options=options)
