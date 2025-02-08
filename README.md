@@ -44,7 +44,9 @@ bracket layout order, the next 16 entries will be the second round picks...).
 After the end of the second, third, and fourth rounds, the information on games played needs to be updated.
 Execute the following python script:
 ```
-pass # Code needs to be added here
+from get_reality import get_reality
+
+get_reality()
 ```
 
 This updates a list of teams that have won.  The first 32 entries will be the teams that won the first round,
