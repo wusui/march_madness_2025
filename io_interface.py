@@ -27,7 +27,7 @@ def predictions(tourney):
     if len(reality) not in [48, 56, 60]:
         print("Can't handle this number of games")
         return 'Error'
-    with open(f'{tourney}_picks.json', 'r', encoding='utf-8') as fd2:
+    with open(f'{tourney}_brackets.json', 'r', encoding='utf-8') as fd2:
         tdata = fd2.read()
     picks = json.loads(tdata)
     return [rank_picks([reality, picks]), possess(tourney.capitalize())]

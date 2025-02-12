@@ -3,11 +3,7 @@
 Create a list of game results and save the data in a local reality.json file
 """
 import os
-from time import sleep
 import json
-from selenium.webdriver.support.ui import WebDriverWait # available since 2.4.0
-from selenium.webdriver.support import expected_conditions as EC # available since 2.26.0
-from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 from get_webpage import get_webpage
 
@@ -23,13 +19,9 @@ def parse_results(bracket):
         labels = game_sec.find_all('label')
         fields = list(map(parse_game, enumerate(labels)))
         if int(fields[0]) > int(fields[2]):
-            return fields[1]
-        return fields[3]
-    driver = get_webpage()
-    driver.get(bracket)
-    WebDriverWait(driver,1000).until(EC.presence_of_all_elements_located(
-                    (By.XPATH,"(//iframe)")))
-    sleep(5)
+            return [fields[1], fields[3]]
+        return [fields[3], fields[1]]
+    driver = get_webpage(bracket)
     soup = BeautifulSoup(driver.page_source, 'html.parser')
     sections = soup.find_all('section',
                              class_='BracketProposition-matchupSection')
@@ -60,5 +52,5 @@ def get_reality():
     Set_reality wrapper that saves results into a local json file
     """
     prefix = os.getcwd().split(os.sep)[-1]
-    with open(f'{prefix}_reality.json', 'w', encoding='utf-8') as f_real:
+    with open(f'{prefix}_semireal.json', 'w', encoding='utf-8') as f_real:
         json.dump(set_reality(), f_real, ensure_ascii=False, indent=4)

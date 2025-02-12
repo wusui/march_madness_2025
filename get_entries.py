@@ -3,13 +3,12 @@
 Create a _brackets.json file linkng entrants with html bracket locations
 """
 import os
-import time
+from time import sleep
 import json
 import configparser
-from selenium.webdriver.support.ui import WebDriverWait # available since 2.4.0
-from selenium.webdriver.support import expected_conditions as EC # available since 2.26.0
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
+from bs4 import BeautifulSoup
 from get_webpage import get_webpage
 
 def get_entries_from_driver_page(driver):
@@ -37,20 +36,16 @@ def parse_first_page(html_page):
         if not npage:
             return []
         ActionChains(driver).move_to_element(npage[0]).click().perform()
-        time.sleep(10)
+        sleep(10)
         c_data = get_entries_from_driver_page(driver)
         binfo = get_buttons(driver)
         return c_data + follow_next_page(driver, binfo, pcount + 1)
-    driver = get_webpage()
-    driver.get(html_page)
-    WebDriverWait(driver,1000).until(EC.presence_of_all_elements_located(
-                    (By.XPATH,"(//iframe)")))
-    time.sleep(10)
+    driver = get_webpage(html_page)
     out_data = get_entries_from_driver_page(driver)
     button_info = get_buttons(driver)
     if not button_info:
-        return dict(out_data)
-    return dict(out_data + follow_next_page(driver, button_info, 2))
+        return out_data
+    return out_data + follow_next_page(driver, button_info, 2)
 
 def get_brackets():
     """
@@ -68,10 +63,42 @@ def get_brackets():
                 f"{groupid}"])
     return parse_first_page(html_page)
 
+def parse_entry(bracket):
+    """
+    Extract picks from page
+    """
+    driver = get_webpage(bracket)
+    soup = BeautifulSoup(driver.page_source, 'html.parser')
+    pix = soup.find_all('span',
+                        class_='BracketPropositionHeader-pickName')
+    return list(map(lambda a: a.text, pix))
+
+def html_to_list(html_file):
+    """
+    Convert bracket info from individual webpage to a list of picks
+    that are eventually a player's entry in the brackets json file
+    """
+    def html_inner(bracket):
+        print(bracket[0])
+        return [bracket[0], parse_entry(bracket[1])]
+    hlist = list(map(html_inner, html_file))
+    valid_pix = list(filter(lambda a: a[1], hlist))
+    return dict(valid_pix)
+
 def make_brackets():
     """
     Wrap get_brackets in code that saves the json file
     """
     prefix = os.getcwd().split(os.sep)[-1]
     with open(f"{prefix}_brackets.json", 'w', encoding='utf-8') as ofile:
-        json.dump(get_brackets(), ofile, indent=4)
+        json.dump(html_to_list(get_brackets()), ofile, indent=4)
+
+def get_entries():
+    """
+    Skip making brackets if bracket file exists (takes too long)
+    """
+    prefix = os.getcwd().split(os.sep)[-1]
+    if os.path.isfile(f"{prefix}_brackets.json"):
+        print('Individual player brackets have been saved')
+    else:
+        make_brackets()
