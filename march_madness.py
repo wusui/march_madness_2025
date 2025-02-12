@@ -19,4 +19,3 @@ def march_madness():
 
 if  __name__ == '__main__':
     march_madness()
-
