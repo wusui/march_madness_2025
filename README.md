@@ -13,61 +13,48 @@ the second, third, and fourth rounds of the tournament are completed.
 
 ## Execution
 
-In all of these steps, cd to the 'mens' or 'womens' directory/folder created during the installation process.
-The text NAME in the file names below should be replaced by the directory/folder name chosen.
-The python scripts listed here should not affect things if run multiple times.
+- cd to the 'mens' or 'womens' directory/folder created during the installation process.
+- The text NAME in the file names below should be replaced by the directory/folder name chosen.
+- Start a python command line and execute the following:
 
-#### Save brackets picked
-
-Once the tournament starts, execute the following python script:
 ```
-from get_entries import make_brackets
+from march_madness import march_madness
 
-make_brackets()
+march_madness()
 ```
 
-This only needs to be run once (when the tournament starts).  When completed, a NAME_brackets.json file
-will be created which contains a directory indexed by entrant name.  The data in this dictionary will
-be a link to the html file containing the bracket.
+This should only be run after the first two rounds have been completed.  Note that this script
+will take a long time to run the first time the script is executed in this directory because
+it must first extract all of the brackets and store them locally.  The bracket name is printed
+as it gets added locally.  After that, since brackets don't change once the tournament starts,
+this step will be skipped.
 
-#### Save actual player picks
-```
-pass # Code needs to be added here
-```
-This also only needs to be run once (when the tournament starts).  When completed, a NAME_picks.json file
-will be created which contains a directory indexed by entrant name.  The data in this dictionary will
-be a list of the picks made in the bracket (the first 32 entries will be the first round picks made in
-bracket layout order, the next 16 entries will be the second round picks...).
+## Further details
 
-#### Update the games played so far
+The following are steps run by march_madness
 
-After the end of the second, third, and fourth rounds, the information on games played needs to be updated.
-Execute the following python script:
-```
-from get_reality import get_reality
+#### get_entries
 
-get_reality()
-```
+The players get extracted and a a file named NAME_brackets.json is created.  This file contains
+a dict indexed by entrant name.  The value of each entry is a list of picks made (first round
+is the first 32 entries, second round is the next 16 entries...)
 
-This updates a list of teams that have won.  The first 32 entries will be the teams that won the first round,
-in bracket order (top to bottom, left side then ringht side of the bracket page).  The next 16 entries will
-be the teams that won the second round in bracket order.  At this point, the Sweet Sixteen results
-can be displayed.  After 8 more entries the Elite Eight results can be displayed and after 4 more entries
-the Final Four can be displayed.  Note that it is possible for this list to be updated by hand.  This
-data is saved in NAME.reality.json
+#### get_reality
 
-#### Create the html page
+A general bracket file is read to collect scores so far.  Results are saved in NAME_semireal.json
 
-Once the second round has finished, execute the following python script:
-```
-from io_interface import make_rpage
+#### mk_consistent
 
-make_rpage()
-```
-  
-This creates the NAME_page.html with which you can do whatever your heart desires.  This script does
+NAME_semireal.json is not consistent with the abbreviations used in the brackets.  This code creates
+a conversion table that converts NAME_semireal.json names to the format used by NAME_brackets.json.
+This table is stored in NAME_link_info.json.  After that, the converted team names are stored in
+NAME_reality.json
+
+#### make_rpage
+
+Creates the NAME_page.html with which you can do whatever your heart desires.  This script does
 not run on the fifth round because it is usually pretty easy to work out things by hand then.  One can
-add text to the NAME_page.html file to further clarify things.
+manually add text to the NAME_page.html file to further clarify things.
 
 ## Other Info
 
