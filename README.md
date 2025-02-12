@@ -10,6 +10,7 @@ the second, third, and fourth rounds of the tournament are completed.
 - Set PYTHONPATH to include this directory/folder
 - Create a folder anywhere named either 'mens' or 'womens' depending on the associated tournament
 - In the folder just created, add a file name group_id.ini where the DEFAULT section contains a groupid value equal to the id of this group
+- Pip install bs4, json, configparser, selenium, jinja2, pandas, and itertools
 
 ## Execution
 
