@@ -16,3 +16,6 @@ def march_madness():
         print("Can't generate pick table until Sweet 16 is completed")
         return
     make_rpage()
+
+if  __name__ == '__main__':
+    march_madness()
