@@ -6,6 +6,7 @@ The data input to make_html consists of records that will be formatted into
 the table header and individual rows of the table, and text to be added to
 the text header.
 """
+import os
 import datetime
 from jinja2 import Environment, FileSystemLoader
 import pandas as pd
@@ -69,7 +70,12 @@ def make_html(solution):
     def set_level(fields):
         return {11: 'Sweet Sixteen', 7: 'Elite Eight', 5: 'Final Four'}[
                     len(fields)]
-    environment = Environment(loader=FileSystemLoader('../madlib'))
+    def get_template():
+        pythonpath_os = os.environ.get('PYTHONPATH')
+        if 'madlib' in pythonpath_os:
+            return f'..{os.sep}madlib'
+        return '.'
+    environment = Environment(loader=FileSystemLoader(get_template()))
     template = environment.get_template('template.html')
     oheader = df_columns(solution[0])
     dframe = pd.DataFrame(df_rows(solution[0]), columns=oheader)
