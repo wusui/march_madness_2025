@@ -13,10 +13,16 @@ import pandas as pd
 
 def df_columns(solution):
     """
-    Generate the columns for the dataframe
+    Generate the columns headers for the dataframe
     """
     def mk_games():
+        """
+        Generate the column headers for each game
+        """
         def igms():
+            """
+            Generate the column headers for a game
+            """
             return list(map(lambda a: list(a.keys()), solution[0]['games']))
         return list(map(lambda a: '<div>' + a[0] + '</div><div>' + \
                         a[1] + '</div>', igms()))
@@ -28,8 +34,19 @@ def get_ccode(fgame):
     Handle the colors used by the individual cells in the table.
     """
     def gc_inner(dvals):
+        """
+        Call setf_dvals with numbers representing the color in an
+        intermediate form.
+        """
         def setf_dvals(cnumbs):
+            """
+            Convert results to a color in the red to green range
+            """
             def setbg_vals(icol):
+                """
+                Use the color value to vary either the red range
+                or green range in the html in the cell.
+                """
                 if icol < 256:
                     return f'#{icol:02x}ff00'
                 return f'#ff{max(511 - icol, 0):02x}00'
@@ -39,20 +56,46 @@ def get_ccode(fgame):
 
 def df_rows(solution):
     """
-    Generate the individual rows in the table
+    solution is a list of row entries where each row is a list of
+    cell values.  Format each cell value to contain the html data
+    for that cell (either text, or text on a colored background)
     """
-
     def strfy(nfloat):
+        """
+        Format a fractional share in the table.
+        """
         return f'{nfloat:.6f}'
     def const_row(row):
+        """
+        Construct a formatted row
+        """
         def left_cols():
+            """
+            Format the first three columns of a row entry
+            """
             return [row['name'], row['w_outcomes'], strfy(row['pct_pt'])]
         def game_field(fgame):
+            """
+            fgame is a dict indexed by team names whose values are the
+            number of winning entries occur when the team named in the
+            index wins the game.  This should return an html table cell
+            with the right color for the background.
+            """
             def gstyle(style_data):
+                """
+                Handle white on black cells first (only one team can
+                win without busting this bracket). If both teams can
+                still win, call get_ccode to format the cell.
+                """
                 if style_data[0][1] == 0:
                     return '#000000;color:#ffffff'
                 return get_ccode(fgame)
             def get_style(teams):
+                """
+                Return either a '*' if this game has no effect on the
+                bracket, or a formatted cell if this pick has some
+                importance.
+                """
                 if teams[0][1] == teams[1][1]:
                     return '*'
                 return f'<div style=background-color:{gstyle(teams)}>' + \
@@ -65,12 +108,27 @@ def df_rows(solution):
 def make_html(solution):
     """
     String together all the pieces that compose the html data returned
-    as a string.
+    as a string.  A pandas dataFrame is used save the table information.
+    The dataFrame is converted to an html table that is inserted inside
+    a jinja2 formatted html file.
     """
     def set_level(fields):
+        """
+        Generate the header text for the table.
+
+        fields are the columns in the html table being produced.  There
+        is a column for each game played in the round, plus a name column,
+        a number of winning outcomes column, and a probable payoff column.
+        So, for example, the third round will have 8 game columns,
+        and 3 extra columns for a total of 11.
+        """
         return {11: 'Sweet Sixteen', 7: 'Elite Eight', 5: 'Final Four'}[
                     len(fields)]
     def get_template():
+        """
+        If there is a ../madlib directory, use that directory to find
+        the template.html file.  Otherwise, try the current directory.
+        """
         pythonpath_os = os.environ.get('PYTHONPATH')
         if 'madlib' in pythonpath_os:
             return f'..{os.sep}madlib'

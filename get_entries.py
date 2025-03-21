@@ -4,6 +4,7 @@ Create a _brackets.json file linkng entrants with html bracket locations
 """
 import os
 from time import sleep
+from datetime import datetime
 import json
 import configparser
 from selenium.webdriver.common.by import By
@@ -58,8 +59,9 @@ def get_brackets():
     config = configparser.ConfigParser()
     config.read('group_info.ini')
     groupid = config.get('DEFAULT', 'groupid')
+    ynow = datetime.now().year
     html_page = ''.join(["https://fantasy.espn.com/games/",
-                f"tournament-challenge-bracket{exten}2024/group?id=",
+                f"tournament-challenge-bracket{exten}{ynow}/group?id=",
                 f"{groupid}"])
     return parse_first_page(html_page)
 
@@ -102,3 +104,6 @@ def get_entries():
         print('Individual player brackets have been saved')
     else:
         make_brackets()
+
+if __name__ == "__main__":
+    get_entries()
