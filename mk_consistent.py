@@ -7,71 +7,55 @@ import os
 import json
 from itertools import chain
 
-def scomp(spair):
-    """
-    Compare the combinations of different team formats in one matchup
-    to find the corresponding abbreviated team name
-    """
-    def get_match(cap_ver):
-        def rate_vs(long_ver):
-            tscan = long_ver.lower().find(cap_ver.strip('U').lower())
-            if tscan == 0 or tscan == 1 and long_ver[0] == 'U':
-                return [long_ver, cap_ver]
-            initials = ''.join(list(map(lambda a: a[0], long_ver.split())))
-            if len(initials) > 1:
-                if cap_ver.find(initials) == 0:
-                    return [long_ver, cap_ver]
-                if cap_ver.find(initials) == 1 and cap_ver[0] == 'U':
-                    return [long_ver, cap_ver]
-            return ['notf', long_ver, cap_ver]
-        return list(map(rate_vs, spair[1]))
-    return list(map(get_match, spair[0]))
-
 def get_real(semireality):
     """
-    Find combinations of different ids for the same team.
+    Associate team abbreviation with full name used in brackets
     """
-    def fix_em1(xdata):
-        def countl(text):
-            retv = {}
-            for letr in list(text.lower()):
-                if letr not in retv:
-                    retv[letr] = 1
-                else:
-                    retv[letr] += 1
-            return retv
-        def find2(idict):
-            return [key for key, value in idict.items() if value == 2]
-        def cnt_sml(solv):
-            return solv[0].lower().count(combv[0]) < 2 and \
-                    solv[1].lower().count(combv[0]) < 2
-        def cnt_2v(solv):
-            return solv[0].lower().count(combv[0]) >= 2 and \
-                    solv[1].lower().count(combv[0]) >= 2
-        def text_ord_okay(entry):
-            llocs = list(map(lambda a: entry[0].lower().find(a),
-                     list(entry[1].lower().strip('u'))))
-            return -1 not in llocs and llocs == sorted(llocs)
-        notf = list(filter(lambda a: a[0] == 'notf', xdata))
-        fnotf = list(map(lambda a: a[1:3], notf))
-        solu = list(filter(lambda a: a not in notf, xdata))
-        if len(notf) == 2 and len(xdata) == 2:
-            return list(filter(text_ord_okay,
-                              list(map(lambda a: a[1:], notf))))
-        if len(notf) == 3:
-            return solu + list(filter(lambda a: a[0] not in solu[0] and
-                                      a[1] not in solu[0], fnotf))
-        if len(solu) == 4:
-            shorts = list(set(list(map(lambda a: a[1], solu))))
-            dletter = list(map(countl, shorts))
-            lval = list(map(find2, dletter))
-            combv = lval[0] + lval[1]
-            return list(filter(cnt_sml, solu)) + list(filter(cnt_2v, solu))
-        return solu
-    def flatten(nlexp):
-        if len(nlexp) == 1:
-            return nlexp[0]
-        return nlexp[0] + nlexp[1]
+    def find_exact_abbrv(tpairs):
+        def fes_inner(spair):
+            def fes_inn2(abbrev):
+                def fes_inn3(sname):
+                    def matches():
+                        #if sname.lower().startswith(abbrev.lower()):
+                        #    return True
+                        if abbrev.lower() in sname.lower():
+                            return True
+                        tminits = ''.join(list(map(lambda a: a[0],
+                                                      sname.split())))
+                        if abbrev in [tminits + 'U', 'U' + tminits, tminits]:
+                            return True
+                        ncomp = list(map(lambda a: sname.lower().find(a),
+                                       list(abbrev.lower())))
+                        if len(abbrev) > 2:
+                            if len(list(filter(lambda a: a >= 0,
+                                        ncomp))) == len(abbrev):
+                                return True
+                            if abbrev.endswith('U'):
+                                if len(list(filter(lambda a: a >= 0,
+                                        ncomp[0:-1]))) == len(abbrev) - 1:
+                                    return True
+                            if abbrev.startswith('U'):
+                                if len(list(filter(lambda a: a >= 0,
+                                        ncomp[1:]))) == len(abbrev) - 1:
+                                    return True
+                        return False
+                    if matches():
+                        return [sname, abbrev]
+                    return []
+                return list(map(fes_inn3, spair[1]))
+            rmtch = list(filter(None, list(map(fes_inn2, spair[0]))))
+            fmtch = list(map(lambda a: list(filter(None, a)), rmtch))
+            nmtch = list(filter(None, fmtch))
+            if nmtch:
+                nmtch = list(map(lambda a: a[0], nmtch))
+                if len(nmtch) == 1 and len(spair[0]) == 2:
+                    sc1 = list(filter(lambda a: a != nmtch[0][0], spair[1]))[0]
+                    ab1 = list(filter(lambda a: a != nmtch[0][1], spair[0]))[0]
+                    nmtch += [[sc1, ab1]]
+            else:
+                print('Consistency Error: ', spair)
+            return nmtch
+        return list(map(fes_inner, tpairs))
     prefix = os.getcwd().split(os.sep)[-1]
     with open(f'{prefix}_brackets.json', 'r', encoding='utf-8') as pdata:
         pinfo = json.load(pdata)
@@ -81,10 +65,8 @@ def get_real(semireality):
     grp_tms = list(zip(*szlists))
     ptms = list(map(lambda a: list(set(list(a))), grp_tms))
     tpairs = list(zip(ptms, semireality[0:32]))
-    nlex = list(map(scomp, tpairs))
-    xlations = list(map(flatten, nlex))
-    tlinks = list(map(fix_em1, xlations))
-    return dict(list(chain.from_iterable(tlinks)))
+    matches = find_exact_abbrv(tpairs)
+    return dict(list(chain.from_iterable(matches)))
 
 def mk_consistent():
     """

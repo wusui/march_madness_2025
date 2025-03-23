@@ -4,6 +4,7 @@ Create a list of game results and save the data in a local reality.json file
 """
 import os
 import json
+from datetime import datetime
 from bs4 import BeautifulSoup
 from get_webpage import get_webpage
 
@@ -14,10 +15,17 @@ def parse_results(bracket):
     def parse_game(ginfo):
         if ginfo[0] % 2 == 1:
             return ginfo[1].text
-        return ginfo[1].find('div', class_='BracketOutcome-score').text
+        scorev = ginfo[1].find('div', class_='BracketOutcome-score')
+        if scorev is None:
+            return '-1'
+        return scorev.text
     def wrap_game(game_sec):
         labels = game_sec.find_all('label')
         fields = list(map(parse_game, enumerate(labels)))
+        if not fields:
+            return fields
+        if int(fields[0]) < 0:
+            return []
         if int(fields[0]) > int(fields[2]):
             return [fields[1], fields[3]]
         return [fields[3], fields[1]]
@@ -35,17 +43,20 @@ def set_reality():
     """
     sw_prefix = {'mens': '-', 'womens': '-women-'}
     prefix = os.getcwd().split(os.sep)[-1]
+    ynow = datetime.now().year
     header = 'https://fantasy.espn.com/games/tournament-challenge-bracket'
-    switcher = f'{sw_prefix[prefix]}2024/bracket'
+    switcher = f'{sw_prefix[prefix]}{ynow}/bracket'
     bracket = ''.join([header, switcher])
-    tbracket = parse_results(bracket)
+    tbracket = list(filter(None, parse_results(bracket)))
     if len(tbracket) >= 60:
         return tbracket[0:60]
     if len(tbracket) >= 56:
         return tbracket[0:56]
     if len(tbracket) >= 48:
         return tbracket[0:48]
-    return tbracket
+    if len(tbracket) >= 32:
+        return tbracket[0:32]
+    return []
 
 def get_reality():
     """
