@@ -32,13 +32,13 @@ this step will be skipped.
 
 ## Further details
 
-The following are steps run by march_madness
+The following are steps run by march_madness:
 
 #### get_entries
 
-The players get extracted and a a file named NAME_brackets.json is created.  This file contains
-a dict indexed by entrant name.  The value of each entry is a list of picks made (first round
-is the first 32 entries, second round is the next 16 entries...)
+The picks made by each entrant get extracted and a a file named NAME_brackets.json is created.
+This file contains a dict indexed by entrant name.  The value of each entry is a list of picks
+made (first round is the first 32 entries, second round is the next 16 entries...)
 
 #### get_reality
 
@@ -49,7 +49,10 @@ A general bracket file is read to collect scores so far.  Results are saved in N
 NAME_semireal.json is not consistent with the abbreviations used in the brackets.  This code creates
 a conversion table that converts NAME_semireal.json names to the format used by NAME_brackets.json.
 This table is stored in NAME_link_info.json.  After that, the converted team names are stored in
-NAME_reality.json
+NAME_reality.json.  After the first round, NAME_reality.json will be 32 team names long and contain the
+32 winners in the first round.  After the second round, NAME_reality.json will be 48 team names long
+with the 16 winners of round 2 attached to the end of the 32 first round winners.  8 more team names
+will be added for round 3, and 4 more for round 2.
 
 #### make_rpage
 
