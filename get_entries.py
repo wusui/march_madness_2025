@@ -51,7 +51,7 @@ def parse_first_page(html_page):
 def get_brackets():
     """
     Wrap parse_first_page call in code that sets up the
-    link to the html file containing the group infromation
+    link to the html file containing the group information
     """
     exten = '-'
     if os.getcwd().split(os.sep)[-1] == 'womens':
