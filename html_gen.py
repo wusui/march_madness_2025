@@ -26,7 +26,7 @@ def df_columns(solution):
             return list(map(lambda a: list(a.keys()), solution[0]['games']))
         return list(map(lambda a: '<div>' + a[0] + '</div><div>' + \
                         a[1] + '</div>', igms()))
-    return ['NAME', '<div>Winning</div>\n<div>Outcomes</div>',
+    return ['<div>NAME<div>', '<div>Winning</div>\n<div>Outcomes</div>',
             '<div>Probable</div>\n<div>Payoff</div>\n'] + mk_games()
 
 def get_ccode(fgame):

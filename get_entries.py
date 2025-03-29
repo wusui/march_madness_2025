@@ -42,6 +42,11 @@ def parse_first_page(html_page):
         binfo = get_buttons(driver)
         return c_data + follow_next_page(driver, binfo, pcount + 1)
     driver = get_webpage(html_page)
+    html_source_code = driver.execute_script("return document.body.innerHTML;")
+    prefix = os.getcwd().split(os.sep)[-1]
+    if not os.path.isfile(f"{prefix}_script.txt"):
+        with open(f"{prefix}_script.txt", 'w', encoding='utf-8') as scrpt:
+            scrpt.write(html_source_code)
     out_data = get_entries_from_driver_page(driver)
     button_info = get_buttons(driver)
     if not button_info:
