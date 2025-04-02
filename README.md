@@ -9,13 +9,12 @@ the second, third, and fourth rounds of the tournament are completed.
 - Download the python and html files in this repo to a directory/folder of your choice
 - Set PYTHONPATH to include this directory/folder
 - Create a folder anywhere named either 'mens' or 'womens' depending on the associated tournament
-- In the folder just created, add a file name group_id.ini where the DEFAULT section contains a groupid value equal to the id of this group
+- In the folder just created, add a file named group_id.ini where the DEFAULT section contains a groupid value equal to the id of this group
 - Pip install bs4, json, configparser, selenium, jinja2, pandas, and itertools
 
 ## Execution
 
 - cd to the 'mens' or 'womens' directory/folder created during the installation process.
-- The text NAME in the file names below should be replaced by the directory/folder name chosen.
 - Start a python command line and execute the following:
 
 ```
@@ -32,7 +31,7 @@ this step will be skipped.
 
 ## Further details
 
-The following are steps run by march_madness:
+The following are steps run by march_madness. NAME in this section will be eitheer 'mens' or 'womens':
 
 #### get_entries
 
