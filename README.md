@@ -59,6 +59,20 @@ Creates the NAME_page.html with which you can do whatever your heart desires.  T
 not run on the fifth round because it is usually pretty easy to work out things by hand then.  One can
 manually add text to the NAME_page.html file to further clarify things.
 
+## Files created
+
+- _bracket.json: dictionary indexed by bracket name.  Each entry is a list of 63 expected winners (the first 32 are the first round winners, the next 16 are the scecond round winners...)
+- _reality.json: list of actual winners (the first 32 are the first round winners, then next 16 are the second round winners...)
+- _semireal.json: list of 2 element lists consisting of most recent matchups
+- _link_info.json: dict indexed by team names (as they appear in _semireal.json) whose values are team names used in _bracket.json and _reality.json
+- _script.txt: Contents of a bracket html page used to extract the info compiled in _link_info.json
+- _page.html: Html file of expected wins and crucial games for each entrant still in the running for first place -- producing this file is the whole reason for this mishigas in the first place
+
+## Caution
+
+Sometinmes failures occur if the _bracket.json file is not fully created due to processes terminating earlier.  If this appears to be the problem, remove all the files that have been
+created (the ones listed in the previous section) and rerun.
+
 ## Other Info
 
 - Written by Warren Usui (warrenusui@gmail.com)
